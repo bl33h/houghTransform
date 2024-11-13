@@ -20,6 +20,7 @@ const int degreeBins = (180 / degreeInc);
 const int rBins = 100;
 const float radInc = ((degreeInc * M_PI) / 180);
 
+// CPU_HoughTran function, which calculates the Hough transform.
 void CPU_HoughTran(unsigned char *pic, int w, int h, int **acc) {
 
   float rMax = sqrt(1.0 * w * w + 1.0 * h * h) / 2;
@@ -54,9 +55,11 @@ void CPU_HoughTran(unsigned char *pic, int w, int h, int **acc) {
   }
 }
 
+// declaration of constant memory variables.
 __constant__ float d_Cos[degreeBins];
 __constant__ float d_Sin[degreeBins];
 
+// kernel of the program used to parallelize the Hough transform calculation process.
 __global__ void GPU_HoughTran(unsigned char *pic, int w, int h, int *acc, float rMax, float rScale) {
 
   int localID = threadIdx.x;

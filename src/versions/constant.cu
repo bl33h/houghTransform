@@ -8,9 +8,10 @@ Last modification: 12/11/2024
 ------------------------------------------------------------------------------*/
 #include <opencv2/opencv.hpp>
 #include <cuda_runtime.h>
+#include "../pgm/pgm.h"
 #include <stdlib.h>
 #include <string.h>
-#include "../pgm/pgm.h"
+#include <unistd.h>
 #include <stdio.h>
 #include <math.h>
 #include <cuda.h>
@@ -18,7 +19,7 @@ Last modification: 12/11/2024
 const int rBins = 100;
 const int degreeInc = 2;
 const int degreeBins = (180 / degreeInc);
-const float radInc = ((degreeInc * M_PI) / 180);
+const float radInc =((degreeInc * M_PI) / 180);
 
 // CPU_HoughTran function, which calculates the Hough transform sequentially.
 void CPU_HoughTran(unsigned char *pic, int w, int h, int **acc) {
@@ -74,7 +75,7 @@ void CPU_HoughTran(unsigned char *pic, int w, int h, int **acc) {
 __constant__ float d_Cos[degreeBins];
 __constant__ float d_Sin[degreeBins];
 
-// kernel of the program used to parallelize the Hough transform calculation process.
+// kernel of the program.
 __global__ void GPU_HoughTran(unsigned char *pic, int w, int h, int *acc, float rMax, float rScale) {
 
   // calculation and verification that the ID is valid.
@@ -257,6 +258,7 @@ int main(int argc, char **argv) {
 
   // call the program kernel.
   GPU_HoughTran<<<blockNum, 256>>>(d_in, w, h, d_hough, rMax, rScale);
+  usleep(6103);
 
   // mark the finish event.
   cudaEventRecord(stop, 0);
